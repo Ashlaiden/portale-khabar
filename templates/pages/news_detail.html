@@ -1,0 +1,127 @@
+{# ===========================================================================
+   pages/news_detail.html — Single article detail page.
+
+   Shows:
+     1. Article header (image, title, meta info).
+     2. Article body.
+     3. Like / Dislike widget.
+     4. Comment section (list + form).
+     5. Related articles.
+     6. Left sidebar.
+   =========================================================================== #}
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ article.summary }}{% endblock %}
+
+{% block content %}
+<div class="flex gap-6">
+
+  {# -- Main column ------------------------------------------------------- #}
+  <div class="flex-1 min-w-0 space-y-6">
+
+    {# -- Article card (read-only display) -------------------------------- #}
+    <article class="glass rounded-2xl overflow-hidden shadow-glass">
+
+      {# -- Hero image --------------------------------------------------- #}
+      {% if article.has_image %}
+        <div class="relative h-64 sm:h-80 md:h-96 overflow-hidden">
+          <img src="{{ article.get_image_url }}" alt="{{ article.title }}"
+               class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-ink-900/90 via-ink-900/30 to-transparent"></div>
+
+          {# Badges on the image. #}
+          <div class="absolute bottom-4 right-4 left-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              {% if article.category %}
+                <span class="badge {{ article.category.color }}">{{ article.category.name }}</span>
+              {% endif %}
+              {% if article.is_rss %}
+                <span class="badge bg-purple-500/25 text-purple-300 text-[10px]">
+                  RSS{% if article.source_name %} · {{ article.source_name }}{% endif %}
+                </span>
+              {% else %}
+                <span class="badge bg-blue-500/20 text-blue-300 text-[10px]">دستی</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {# -- Text content -------------------------------------------------- #}
+      <div class="p-5 sm:p-8">
+
+        {# -- Title ------------------------------------------------------ #}
+        <h1 class="text-2xl sm:text-3xl leading-relaxed mb-4">{{ article.title }}</h1>
+
+        {# -- Meta line --------------------------------------------------- #}
+        <div class="flex flex-wrap items-center gap-3 text-sm text-slate-400 mb-6 pb-4 border-b border-white/5">
+          <time datetime="{{ article.published_at|date:'c' }}">
+            <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            {{ article.published_at|date:"j M Y، ساعت H:i" }}
+          </time>
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            {{ article.views_count }} بازدید
+          </span>
+
+          {# External source link for RSS articles. #}
+          {% if article.source_url %}
+            <a href="{{ article.source_url }}" target="_blank" rel="noopener noreferrer"
+               class="text-brand-300 hover:text-brand-200 transition-colors">
+              منبع اصلی ↗
+            </a>
+          {% endif %}
+        </div>
+
+        {# -- Summary (bold intro) -------------------------------------- #}
+        {% if article.summary %}
+          <div class="text-lg text-slate-200 leading-relaxed mb-6 pb-6 border-b border-white/5 font-medium">
+            {{ article.summary }}
+          </div>
+        {% endif %}
+
+        {# -- Full content ------------------------------------------------ #}
+        {% if article.content %}
+          <div class="prose prose-invert prose-slate max-w-none text-slate-300 leading-loose whitespace-pre-line">
+            {{ article.content }}
+          </div>
+        {% endif %}
+
+      </div>
+    </article>
+
+    {# -- Like / Dislike widget ------------------------------------------ #}
+    <div class="flex items-center gap-4">
+      {% include 'components/like_widget.html' %}
+    </div>
+
+    {# -- Comment section ------------------------------------------------ #}
+    {% include 'components/comment_section.html' %}
+
+    {# -- Related articles ----------------------------------------------- #}
+    {% if related_news %}
+      <section>
+        <h2 class="section-title text-xl mb-4">اخبار مرتبط</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {% for article in related_news %}
+            {% include 'components/article_card.html' with show_image=True %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+  </div>
+
+  {# -- Left sidebar (latest news) --------------------------------------- #}
+  <div class="hidden lg:block w-72 flex-shrink-0">
+    {% include 'components/sidebar.html' %}
+  </div>
+
+</div>
+{% endblock %}

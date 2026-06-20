@@ -1,0 +1,83 @@
+{# ===========================================================================
+   components/navbar.html — Top navigation bar.
+
+   A sticky glassmorphism bar with the site logo, main menu links, a search
+   box and a mobile hamburger toggle. Menu links highlight the active page
+   using the ``active_menu`` context variable set by each view.
+   =========================================================================== #}
+
+{# -- Desktop / mobile toggle (sits inside a glass container) ------------ #}
+<nav class="sticky top-0 z-50 glass border-b border-white/5 shadow-glass">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    <div class="flex items-center justify-between h-16">
+
+      {# -- Brand / logo -------------------------------------------------- #}
+      <a href="{% url 'news:home' %}" class="flex items-center gap-2 text-slate-100 hover:text-white transition-colors">
+        {# Simple SVG newspaper icon as logo placeholder. #}
+        <svg class="w-8 h-8 text-brand-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.33.15-3.5.5v14.5c0 .28.22.5.5.5.1 0 .15-.02.25-.05C5.33 19.22 6.72 19 8 19c1.52 0 3.06.48 4.5 1.5.14.1.33.1.48 0C14.14 19.48 15.68 19 17.2 19c1.28 0 2.67.22 4 1.02.08.04.15.05.25.05.28 0 .5-.22.5-.5V5.02l-.05-.02zM11 18c-1.38-.58-2.85-.83-4.5-.83-1.25 0-2.5.2-3.5.6V6.5c1-.3 2.17-.5 3.5-.5 1.7 0 3.33.45 4.5 1v11.5zm10 0c-1-.4-2.25-.6-3.5-.6-1.65 0-3.12.25-4.5.83V6.5c1.17-.55 2.8-1 4.5-1 1.33 0 2.5.2 3.5.5v12.5z"/>
+        </svg>
+        <span class="font-display text-lg">{{ SITE_NAME }}</span>
+      </a>
+
+      {# -- Desktop menu links ------------------------------------------- #}
+      <div class="hidden md:flex items-center gap-1">
+        {% url 'news:home' as url_home %}
+        {% url 'news:list' as url_news %}
+        {% url 'news:rss_news' as url_rss %}
+        {% url 'pages:about' as url_about %}
+        {% url 'pages:contact' as url_contact %}
+
+        <a href="{{ url_home }}"
+           class="px-3 py-2 rounded-lg text-sm transition-colors
+                  {% if active_menu == 'home' %}text-brand-300 bg-brand-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+          خانه
+        </a>
+        <a href="{{ url_news }}"
+           class="px-3 py-2 rounded-lg text-sm transition-colors
+                  {% if active_menu == 'news' %}text-brand-300 bg-brand-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+          اخبار
+        </a>
+        <a href="{{ url_rss }}"
+           class="px-3 py-2 rounded-lg text-sm transition-colors
+                  {% if active_menu == 'rss' %}text-brand-300 bg-brand-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+          اخبار RSS
+        </a>
+        <a href="{{ url_about }}"
+           class="px-3 py-2 rounded-lg text-sm transition-colors
+                  {% if active_menu == 'about' %}text-brand-300 bg-brand-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+          درباره ما
+        </a>
+        <a href="{{ url_contact }}"
+           class="px-3 py-2 rounded-lg text-sm transition-colors
+                  {% if active_menu == 'contact' %}text-brand-300 bg-brand-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+          ارتباط با ما
+        </a>
+      </div>
+
+      {# -- Mobile hamburger button --------------------------------------- #}
+      <button id="nav-toggle" class="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    {# -- Mobile menu (hidden by default, toggled by main.js) -------------- #}
+    <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-1">
+      <a href="{% url 'news:home' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">خانه</a>
+      <a href="{% url 'news:list' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">اخبار</a>
+      <a href="{% url 'news:rss_news' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">اخبار RSS</a>
+      <a href="{% url 'pages:about' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">درباره ما</a>
+      <a href="{% url 'pages:contact' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5">ارتباط با ما</a>
+
+      {# Mini search in mobile menu. #}
+      <form action="{% url 'news:search' %}" method="get" class="pt-2">
+        <input type="text" name="q" placeholder="جستجو..."
+               class="input text-sm">
+      </form>
+    </div>
+
+  </div>
+</nav>

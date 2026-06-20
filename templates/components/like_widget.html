@@ -1,0 +1,46 @@
+{# ===========================================================================
+   components/like_widget.html — Like / Dislike buttons for an article.
+
+   Context variables:
+     article    — Article model instance (required).
+     user_vote  — The current visitor's vote value: -1, 0, or 1.
+
+   The container must carry a ``data-article-id`` attribute so main.js can find
+   it. Buttons use ``data-vote`` to signal their intent to the AJAX handler.
+   =========================================================================== #}
+
+<div class="glass rounded-2xl p-4 shadow-glass flex items-center gap-3" data-article-id="{{ article.id }}">
+
+  {# -- Like button ------------------------------------------------------ #}
+  <button type="button"
+          data-vote="like"
+          class="{% if user_vote == 1 %}btn-primary{% else %}btn-ghost{% endif %} flex items-center gap-1.5 text-sm"
+          aria-label="لایک">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017a2 2 0 01-.632-.103l-2.145-.644A2 2 0 017.28 19.1l-2.1-1.834A1 1 0 015.053 16.5l1.873-7.1a2 2 0 01.822-1.283l4.06-3.02a2 2 0 012.374.018l.77.544a1 1 0 01.37.47"/>
+    </svg>
+    <span id="like-count">{{ article.likes_count }}</span>
+  </button>
+
+  {# -- Dislike button --------------------------------------------------- #}
+  <button type="button"
+          data-vote="dislike"
+          class="{% if user_vote == -1 %}btn-primary{% else %}btn-ghost{% endif %} flex items-center gap-1.5 text-sm"
+          aria-label="دیسلایک">
+    <svg class="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017a2 2 0 01-.632-.103l-2.145-.644A2 2 0 017.28 19.1l-2.1-1.834A1 1 0 015.053 16.5l1.873-7.1a2 2 0 01.822-1.283l4.06-3.02a2 2 0 012.374.018l.77.544a1 1 0 01.37.47"/>
+    </svg>
+    <span id="dislike-count">{{ article.dislikes_count }}</span>
+  </button>
+
+  {# -- View count ------------------------------------------------------- #}
+  <div class="flex items-center gap-1 text-slate-500 text-sm mr-auto">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+    </svg>
+    <span>{{ article.views_count }}</span>
+  </div>
+</div>

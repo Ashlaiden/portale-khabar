@@ -1,0 +1,40 @@
+{# ===========================================================================
+   pages/about.html — About the portal.
+   =========================================================================== #}
+{% extends 'base.html' %}
+
+{% block title %}درباره ما — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <h1 class="section-title text-2xl sm:text-3xl">درباره {{ SITE_NAME }}</h1>
+
+  <div class="glass rounded-2xl p-6 sm:p-8 shadow-glass space-y-6 text-slate-300 leading-loose">
+
+    <p>
+      <strong class="text-slate-100">{{ SITE_NAME }}</strong> یک پرتال خبری فارسی‌زبان است که اخبار را
+      به‌صورت خودکار از منابع معتبر خبرگزاری‌ها دریافت و دسته‌بندی می‌کند. هدف ما ارائه‌ی سریع و
+      دقیق‌ترین اخبار در کنار تجربه‌ی کاربری مدرن و خواناست.
+    </p>
+
+    <h2 class="text-lg text-slate-100 font-semibold">ویژگی‌ها</h2>
+    <ul class="list-disc pr-5 space-y-2 text-slate-400">
+      <li>دریافت خودکار اخبار از فیدهای RSS خبرگزاری‌ها</li>
+      <li>دسته‌بندی هوشمند اخبار بر اساس محتوا</li>
+      <li>فیلتر اخبار تکراری برای افزایش کیفیت</li>
+      <li>امکان جستجو و فیلتر بر اساس دسته و تاریخ</li>
+      <li>ثبت نظر و لایک/دیسلایک بدون نیاز به ثبت‌نام</li>
+      <li>رابط کاربری مدرن با حالت دارک</li>
+    </ul>
+
+    <h2 class="text-lg text-slate-100 font-semibold">فناوری‌ها</h2>
+    <p class="text-slate-400">
+      این پروژه با فریم‌ورک Django و زبان Python توسعه یافته، از دیتابیس SQLite
+      استفاده می‌کند و رابط کاربری آن با Tailwind CSS طراحی شده است.
+    </p>
+
+  </div>
+
+</div>
+{% endblock %}

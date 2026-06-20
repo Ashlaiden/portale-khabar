@@ -1,0 +1,59 @@
+{# ===========================================================================
+   pages/home.html — Home page of the portal.
+
+   Shows:
+     1. A hero row of featured (big) boxes.
+     2. A grid of the latest news.
+     3. The shared left sidebar (latest news).
+   =========================================================================== #}
+{% extends 'base.html' %}
+
+{% block title %}{{ SITE_NAME }} — صفحه اصلی{% endblock %}
+
+{% block content %}
+<div class="flex gap-6">
+
+  {# -- Main column ------------------------------------------------------- #}
+  <div class="flex-1 min-w-0 space-y-8">
+
+    {# -- Hero / Featured big boxes -------------------------------------- #}
+    {% if featured_news %}
+      <section>
+        <h2 class="section-title text-xl mb-4">خبرهای ویژه</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {% for article in featured_news %}
+            {% include 'components/article_card.html' with large=True %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# -- Latest news grid ------------------------------------------------ #}
+    {% if latest_news %}
+      <section>
+        <h2 class="section-title text-xl mb-4">آخرین اخبار</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {% for article in latest_news %}
+            {% include 'components/article_card.html' %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# -- Empty state ----------------------------------------------------- #}
+    {% if not featured_news and not latest_news %}
+      <div class="glass rounded-2xl p-12 shadow-glass text-center">
+        <p class="text-slate-400 text-lg mb-2">خبر جدیدی برای نمایش وجود ندارد.</p>
+        <p class="text-slate-500 text-sm">لطفاً از پنل مدیریت خبر اضافه کنید یا منابع RSS را فعال کنید.</p>
+      </div>
+    {% endif %}
+
+  </div>
+
+  {# -- Left sidebar (latest news) --------------------------------------- #}
+  <div class="hidden lg:block w-72 flex-shrink-0">
+    {% include 'components/sidebar.html' %}
+  </div>
+
+</div>
+{% endblock %}

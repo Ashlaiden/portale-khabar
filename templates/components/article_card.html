@@ -1,0 +1,111 @@
+{# ===========================================================================
+   components/article_card.html — A glassmorphism card for a single article.
+
+   Context variables:
+     article       — Article model instance (required).
+     show_image    — Boolean. Whether to display the image. Default True.
+     large         — Boolean. If True, renders a larger card variant. Default False.
+
+   The card is raised (shadow + translateY on hover) and shows the RSS badge
+   + source name when the article is RSS-sourced.
+   =========================================================================== #}
+
+{% load static %}
+
+{% firstof show_image True as show_img %}
+{% firstof large False as is_large %}
+
+<article class="glass glass-hover rounded-2xl overflow-hidden shadow-glass flex flex-col">
+
+  {# -- Image ------------------------------------------------------------- #}
+  {% if show_img and article.has_image %}
+    <a href="{{ article.get_absolute_url }}" class="relative block overflow-hidden
+       {% if is_large %}h-64 sm:h-80{% else %}h-48 sm:h-56{% endif %}">
+      <img src="{{ article.get_image_url }}" alt="{{ article.title }}"
+           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+           loading="lazy">
+      {# Gradient overlay for text readability. #}
+      <div class="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-transparent"></div>
+
+      {# Category badge (bottom-left of image). #}
+      {% if article.category %}
+        <span class="badge absolute bottom-3 right-3 {{ article.category.color }}">
+          {{ article.category.name }}
+        </span>
+      {% endif %}
+
+      {# RSS indicator badge (bottom-right of image). #}
+      {% if article.is_rss %}
+        <span class="badge absolute bottom-3 left-3 bg-purple-500/25 text-purple-300 text-[10px]">
+          RSS
+          {% if article.source_name %}
+            · {{ article.source_name }}
+          {% endif %}
+        </span>
+      {% endif %}
+    </a>
+  {% endif %}
+
+  {# -- Text body --------------------------------------------------------- #}
+  <div class="p-4 flex flex-col flex-1">
+
+    {# -- Meta line (when there's no image to show badges on). ------------ #}
+    {% if not show_img or not article.has_image %}
+      <div class="flex flex-wrap items-center gap-2 mb-2 text-xs text-slate-500">
+        {% if article.category %}
+          <span class="badge {{ article.category.color }}">{{ article.category.name }}</span>
+        {% endif %}
+        {% if article.is_rss %}
+          <span class="badge bg-purple-500/20 text-purple-300 text-[10px]">
+            RSS{% if article.source_name %} · {{ article.source_name }}{% endif %}
+          </span>
+        {% endif %}
+        <time datetime="{{ article.published_at|date:'c' }}">
+          {{ article.published_at|date:"j M Y" }}
+        </time>
+      </div>
+    {% endif %}
+
+    {# -- Title ----------------------------------------------------------- #}
+    <a href="{{ article.get_absolute_url }}"
+       class="{% if is_large %}text-xl sm:text-2xl{% else %}text-base sm:text-lg{% endif %} font-semibold text-slate-100 hover:text-brand-300 transition-colors leading-relaxed line-clamp-2 mb-2">
+      {{ article.title }}
+    </a>
+
+    {# -- Summary ---------------------------------------------------------- #}
+    {% if article.summary %}
+      <p class="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-3">
+        {{ article.summary|truncatewords:40 }}
+      </p>
+    {% endif %}
+
+    {# -- Footer (stats / date) ------------------------------------------- #}
+    <div class="mt-auto flex items-center gap-3 text-xs text-slate-500 pt-3 border-t border-white/5">
+      {% if show_img and article.has_image %}
+        <time datetime="{{ article.published_at|date:'c' }}">
+          {{ article.published_at|date:"j M Y" }}
+        </time>
+      {% endif %}
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+        {{ article.views_count }}
+      </span>
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        {{ article.likes_count }}
+      </span>
+      <span class="flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        {{ article.comments.count }}
+      </span>
+    </div>
+  </div>
+
+</article>

@@ -1,0 +1,71 @@
+{# ===========================================================================
+   pages/contact.html — Contact page with a simple message form.
+   =========================================================================== #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ارتباط با ما — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+
+  <h1 class="section-title text-2xl sm:text-3xl">ارتباط با ما</h1>
+
+  {# -- Django messages (success / error) -------------------------------- #}
+  {% if messages %}
+    <div class="space-y-2">
+      {% for msg in messages %}
+        <div class="glass rounded-xl px-4 py-3 text-sm shadow-glass
+                    {% if msg.tags == 'error' %}border border-red-500/30 text-red-300
+                    {% elif msg.tags == 'success' %}border border-emerald-500/30 text-emerald-300
+                    {% else %}border border-brand-500/30 text-brand-300{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="glass rounded-2xl p-6 sm:p-8 shadow-glass">
+
+    <p class="text-slate-400 mb-6 leading-relaxed">
+      برای ارسال پیام، فرم زیر را تکمیل کنید. ما در اسرع وقت با شما تماس خواهیم گرفت.
+    </p>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="contact-name" class="block text-xs text-slate-400 mb-1">نام <span class="text-red-400">*</span></label>
+          <input id="contact-name" type="text" name="name" required maxlength="80"
+                 value="{{ form_name|default:'' }}"
+                 class="input" placeholder="نام شما">
+        </div>
+        <div>
+          <label for="contact-email" class="block text-xs text-slate-400 mb-1">ایمیل <span class="text-slate-600">(اختیاری)</span></label>
+          <input id="contact-email" type="email" name="email"
+                 value="{{ form_email|default:'' }}"
+                 class="input" placeholder="email@example.com">
+        </div>
+      </div>
+
+      <div>
+        <label for="contact-message" class="block text-xs text-slate-400 mb-1">پیام <span class="text-red-400">*</span></label>
+        <textarea id="contact-message" name="message" required rows="6"
+                  class="input resize-y"
+                  placeholder="پیام خود را بنویسید…">{{ form_message|default:'' }}</textarea>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="submit" class="btn-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          ارسال پیام
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+develop-eggs/
+sdist/
+wheels/
+pip-wheel-metadata/
+.installed.cfg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# ---------------------------------------------------------------------------
+# Django / project
+# ---------------------------------------------------------------------------
+# Local SQLite database (regenerated from migrations + fixtures).
+db.sqlite3
+db.sqlite3-journal
+
+# Secret / local settings overrides
+local_settings.py
+.env
+
+# Uploaded media (user content, not source-controlled).
+/media/
+
+# collectstatic output (rebuilt on deploy).
+/staticfiles/
+
+# ---------------------------------------------------------------------------
+# Frontend tooling (Tailwind is compiled into static/)
+# ---------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Tailwind build artefacts (we commit the source input.css, not the bundle).
+/static/css/tailwind.css
+/static/dist/
+
+# ---------------------------------------------------------------------------
+# Editors / OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini

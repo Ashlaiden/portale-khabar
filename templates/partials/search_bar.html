@@ -1,0 +1,17 @@
+{# ===========================================================================
+   partials/search_bar.html — A compact search box for the top of list pages.
+
+   Expects ``active_query`` (the current search text) in the context.
+   =========================================================================== #}
+
+<form action="{% url 'news:search' %}" method="get"
+      class="glass rounded-xl p-3 shadow-glass mb-6 flex items-center gap-2">
+  <svg class="w-5 h-5 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+  </svg>
+  <input type="text" name="q"
+         value="{{ active_query }}"
+         placeholder="جستجو در اخبار…"
+         class="flex-1 bg-transparent text-slate-100 placeholder:text-slate-500 text-sm outline-none">
+</form>

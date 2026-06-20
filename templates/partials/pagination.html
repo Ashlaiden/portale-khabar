@@ -1,0 +1,41 @@
+{# ===========================================================================
+   partials/pagination.html — Page navigation.
+
+   Expects ``page_obj`` (Django Paginator page) in the context.
+   Preserves all current GET parameters so filters survive page changes.
+   =========================================================================== #}
+
+{% if page_obj.has_other_pages %}
+  <nav class="flex items-center justify-center gap-1 mt-8" aria-label="صفحات">
+
+    {# -- Previous -------------------------------------------------------- #}
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}"
+         class="btn-ghost text-sm px-3 py-2">
+        قبلی
+      </a>
+    {% else %}
+      <span class="btn-ghost text-sm px-3 py-2 opacity-40 cursor-not-allowed">قبلی</span>
+    {% endif %}
+
+    {# -- Page numbers ---------------------------------------------------- #}
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="btn-primary text-sm px-3 py-2">{{ num }}</span>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}" class="btn-ghost text-sm px-3 py-2">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {# -- Next ------------------------------------------------------------ #}
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}"
+         class="btn-ghost text-sm px-3 py-2">
+        بعدی
+      </a>
+    {% else %}
+      <span class="btn-ghost text-sm px-3 py-2 opacity-40 cursor-not-allowed">بعدی</span>
+    {% endif %}
+
+  </nav>
+{% endif %}

@@ -1,0 +1,30 @@
+# ---------------------------------------------------------------------------
+# Portale Khabar – Python dependencies
+# Install with:  pip install -r requirements.txt
+# ---------------------------------------------------------------------------
+
+# Core web framework (LTS line of the 5.x series).
+Django==5.2
+
+# Modern, dark, RTL-friendly admin skin (replaces the default admin look).
+django-jazzmin==3.0.4
+
+# In-process background scheduler used to periodically fetch RSS feeds
+# (lightweight alternative to Celery; works great with SQLite).
+django-apscheduler==0.7.0
+
+# Lets views render individual template blocks (used for the AJAX-powered
+# like / comment widgets without a separate JS framework).
+django-render-block==0.11
+
+# RSS / Atom feed parsing.
+feedparser==6.0.12
+
+# Robust date parsing for the variety of date formats feeds publish.
+python-dateutil==2.9.0.post0
+
+# Image handling for manually-uploaded article images (Django's ImageField).
+Pillow==12.2.0
+
+# (Optional, nice-to-have) Persian / Jalali date formatting helpers.
+# django-jalali==6.1.0   # uncomment if you want Jalali dates in templates

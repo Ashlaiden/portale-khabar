@@ -1,0 +1,57 @@
+{% load static %}
+{# ===========================================================================
+   base.html — Master layout for Portale Khabar.
+
+   Every page template extends this file. It defines:
+     * <html lang="fa" dir="rtl"> with the dark class.
+     * CSS (Tailwind + font face declarations).
+     * JS (main.js + the CSRF meta tag).
+     * Named blocks that child templates fill:
+       - title, meta, content, extra_css, extra_js
+
+   Components and partials live in their own directories and are included
+   from page templates via the `include` tag.
+   =========================================================================== #}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}پرتال خبری — آخرین اخبار به‌صورت خودکار از خبرگزاری‌ها{% endblock %}">
+
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+
+  {# -- CSRF token (read by main.js for AJAX) ---------------------------- #}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+
+  {# -- Fonts (self-hosted; fallback to CDN if local files missing) ------- #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Lalezar&display=swap" rel="stylesheet">
+
+  {# -- Tailwind CSS (compiled) ------------------------------------------ #}
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+
+  {# -- Extra page-specific CSS ------------------------------------------ #}
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  {# -- Navigation bar (top) --------------------------------------------- #}
+  {% include 'components/navbar.html' %}
+
+  {# -- Main content area ------------------------------------------------- #}
+  <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# -- Footer ------------------------------------------------------------- #}
+  {% include 'components/footer.html' %}
+
+  {# -- JavaScript -------------------------------------------------------- #}
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

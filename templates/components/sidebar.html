@@ -1,0 +1,53 @@
+{# ===========================================================================
+   components/sidebar.html — Left sidebar with latest news.
+
+   Expects ``sidebar_news`` (a list of Article instances) in the context.
+   Typically rendered next to the main content area on list/detail pages.
+   =========================================================================== #}
+
+<aside class="glass rounded-2xl p-4 shadow-glass sticky top-20">
+  {# -- Section heading -------------------------------------------------- #}
+  <h3 class="section-title text-lg">آخرین اخبار</h3>
+
+  <ul class="space-y-3 divide-y divide-white/5">
+    {% for item in sidebar_news %}
+      <li class="py-3 first:pt-0 last:pb-0">
+        <a href="{{ item.get_absolute_url }}"
+           class="group flex gap-3 items-start">
+
+          {# Thumbnail (small, if the article has an image). #}
+          {% if item.has_image %}
+            <img src="{{ item.get_image_url }}" alt=""
+                 class="w-16 h-16 object-cover rounded-xl flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity"
+                 loading="lazy">
+          {% endif %}
+
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-slate-200 leading-relaxed line-clamp-2 group-hover:text-brand-300 transition-colors">
+              {{ item.title }}
+            </p>
+            <div class="flex items-center gap-2 mt-1 text-xs text-slate-500">
+              {# RSS badge and source name if applicable. #}
+              {% if item.is_rss %}
+                <span class="badge bg-purple-500/20 text-purple-300 text-[10px]">RSS</span>
+                {% if item.source_name %}
+                  <span>{{ item.source_name }}</span>
+                {% endif %}
+              {% else %}
+                <span>دستی</span>
+              {% endif %}
+              <span>·</span>
+              <time datetime="{{ item.published_at|date:'c' }}">
+                {{ item.published_at|date:"j M Y" }}
+              </time>
+            </div>
+          </div>
+        </a>
+      </li>
+    {% empty %}
+      <li class="py-6 text-center text-slate-500 text-sm">
+        هنوز خبری ثبت نشده است.
+      </li>
+    {% endfor %}
+  </ul>
+</aside>

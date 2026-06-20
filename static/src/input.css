@@ -1,0 +1,108 @@
+/*
+ * Tailwind source stylesheet.
+ *
+ * Compile to static/css/tailwind.css with:
+ *     npx tailwindcss -i ./static/src/input.css -o ./static/css/tailwind.css --watch
+ *
+ * Only the directives below are needed — extra component classes are defined
+ * in tailwind.config.js (the inline `glass` plugin) so they're reusable as
+ * real Tailwind utilities across templates.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+ * Base layer: RTL + Persian typography niceties.
+ * ------------------------------------------------------------------------- */
+@layer base {
+  html {
+    /* RTL is also set on <html dir="rtl"> in base.html; keep it here too
+       so any pre-render CSS uses the correct direction. */
+    direction: rtl;
+  }
+
+  body {
+    @apply bg-ink-900 text-slate-200 font-sans antialiased;
+    /* Soft radial glow on the background to give the dark UI depth. */
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(99, 102, 241, 0.12), transparent 60%),
+      radial-gradient(1000px 500px at 0% 0%, rgba(16, 185, 129, 0.06), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  /* Headings use the display font for a slightly more expressive feel.
+     NOTE: We write font-family directly (not @apply font-display) to avoid a
+     circular dependency with the custom Tailwind theme extension. */
+  h1, h2, h3 {
+    font-family: 'Lalezar', 'Vazirmatn', 'Tahoma', sans-serif;
+    letter-spacing: -0.025em;
+    color: #f8fafc;
+  }
+
+  /* Make links inherit colour by default (we set explicit colours per use). */
+  a {
+    @apply text-inherit;
+  }
+
+  /* Nicer focus ring for keyboard users across the whole site. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-400/70 ring-offset-2 ring-offset-ink-900;
+  }
+
+  /* Scrollbar styling for the dark theme (WebKit). */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b0f1a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #243049;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2f3e5e;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Components layer: small reusable building blocks.
+ * ------------------------------------------------------------------------- */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2
+           text-sm font-medium transition-all duration-150 select-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-500 shadow-glow;
+  }
+  .btn-ghost {
+    @apply btn glass glass-hover text-slate-200;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full rounded-xl bg-ink-700/60 border border-white/10
+           px-4 py-2.5 text-slate-100 placeholder:text-slate-500
+           focus:border-brand-400/70 focus:bg-ink-700;
+  }
+
+  /* Small category badge */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5
+           text-xs font-medium;
+  }
+
+  /* Section title with a little accent bar on the right (RTL friendly). */
+  .section-title {
+    @apply relative flex items-center gap-3 text-xl text-slate-100 mb-4;
+  }
+  .section-title::before {
+    content: '';
+    @apply inline-block h-5 w-1.5 rounded-full bg-brand-500;
+  }
+}

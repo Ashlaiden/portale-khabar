@@ -1,0 +1,56 @@
+/*
+ * Custom admin CSS overrides for Portale Khabar.
+ *
+ * Loaded via ModelAdmin.Media so it runs *after* jazzmin's own dark theme.
+ * Focus: RTL tweaks, Persian font, and minor visual polish.
+ */
+
+/* Force RTL on the entire admin interface. */
+body {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Vazirmatn', 'Tahoma', system-ui, sans-serif !important;
+}
+
+/* Fix jazzmin sidebar / topbar in RTL mode. */
+.navbar-nav, .sidebar-menu {
+    text-align: right;
+}
+.main-sidebar {
+    direction: rtl;
+    right: 0;
+    left: auto;
+}
+
+/* Ensure form labels and inputs respect RTL. */
+.form-group label {
+    float: right;
+}
+.control-label {
+    text-align: right;
+}
+
+/* Table headers in RTL. */
+th {
+    text-align: right;
+}
+
+/* Code / pre blocks stay LTR (URLs, slugs, etc.). */
+code, pre, .slug {
+    direction: ltr;
+    text-align: left;
+}
+
+/* Make Persian text slightly larger for readability. */
+body, .content-wrapper {
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* Badge / status colors — ensure they're visible on dark background. */
+.object-tools a,
+.changelink,
+.inlinechangelink,
+.related-widget-wrapper-link {
+    color: #818cf8;
+}

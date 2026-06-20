@@ -1,0 +1,26 @@
+{# ===========================================================================
+   components/footer.html — Site-wide footer.
+
+   A simple glassmorphism footer with copyright, links and a small branding note.
+   =========================================================================== #}
+<footer class="mt-auto glass border-t border-white/5">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+
+      {# -- Copyright / brand --------------------------------------------- #}
+      <div class="flex items-center gap-2">
+        <span class="text-brand-400">©</span>
+        <span>{{ SITE_NAME }} — پرتال خبری فارسی</span>
+      </div>
+
+      {# -- Quick links --------------------------------------------------- #}
+      <div class="flex items-center gap-4">
+        <a href="{% url 'pages:about' %}" class="hover:text-slate-200 transition-colors">درباره ما</a>
+        <a href="{% url 'pages:contact' %}" class="hover:text-slate-200 transition-colors">ارتباط</a>
+        <a href="/admin/" class="hover:text-slate-200 transition-colors">مدیریت</a>
+      </div>
+
+    </div>
+  </div>
+</footer>

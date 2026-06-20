@@ -1,0 +1,54 @@
+{# ===========================================================================
+   pages/news_list.html — News listing with filters and sidebar.
+
+   Used for both the general news list (/news/) and the RSS-only list
+   (/rss-news/). The view passes ``page_obj`` (paginated), ``sidebar_news``,
+   filter state variables, and ``page_title`` for the heading.
+   =========================================================================== #}
+{% extends 'base.html' %}
+{% load portal_extras %}
+
+{% block title %}{{ page_title }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="flex gap-6">
+
+  {# -- Main column ------------------------------------------------------- #}
+  <div class="flex-1 min-w-0 space-y-6">
+
+    {# -- Page heading --------------------------------------------------- #}
+    <h1 class="section-title text-2xl">{{ page_title }}</h1>
+
+    {# -- Filter bar (category / date / search) -------------------------- #}
+    {% portal_date_choices as date_choices %}
+    {% include 'partials/filter_bar.html' %}
+
+    {# -- Article grid ---------------------------------------------------- #}
+    {% if page_obj %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for article in page_obj %}
+          {% include 'components/article_card.html' %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {# -- Empty state ----------------------------------------------------- #}
+    {% if not page_obj or page_obj.paginator.count == 0 %}
+      <div class="glass rounded-2xl p-12 shadow-glass text-center">
+        <p class="text-slate-400 text-lg mb-2">خبری یافت نشد.</p>
+        <p class="text-slate-500 text-sm">فیلترها را تغییر دهید یا بعداً مراجعه کنید.</p>
+      </div>
+    {% endif %}
+
+    {# -- Pagination ----------------------------------------------------- #}
+    {% include 'partials/pagination.html' %}
+
+  </div>
+
+  {# -- Left sidebar (latest news) --------------------------------------- #}
+  <div class="hidden lg:block w-72 flex-shrink-0">
+    {% include 'components/sidebar.html' %}
+  </div>
+
+</div>
+{% endblock %}

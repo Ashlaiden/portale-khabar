@@ -1,0 +1,57 @@
+{# ===========================================================================
+   partials/filter_bar.html — Category, date and search filters.
+
+   Renders a horizontal filter strip above the news list. Active filters are
+   highlighted. All links preserve the current ``q`` search term.
+
+   Context variables:
+     active_category — slug of the currently-selected category (or '').
+     active_date     — 'today' / 'week' / 'month' / ''.
+     active_query    — current search query text (or '').
+   =========================================================================== #}
+
+<div class="glass rounded-2xl p-4 shadow-glass mb-6">
+  <div class="flex flex-wrap items-center gap-3">
+
+    {# -- Search box (always visible) ------------------------------------ #}
+    <form action="{% url 'news:search' %}" method="get" class="flex-1 min-w-[200px]">
+      <input type="text" name="q"
+             value="{{ active_query }}"
+             placeholder="جستجو در اخبار…"
+             class="input text-sm">
+    </form>
+
+    {# -- Category pills ------------------------------------------------- #}
+    {% for cat in SITE_CATEGORIES %}
+      {% if active_category == cat.slug %}
+        <a href="?category="
+           class="badge {{ cat.color }} ring-1 ring-brand-400/40 text-sm">
+          {{ cat.name }} ✕
+        </a>
+      {% else %}
+        <a href="?category={{ cat.slug }}"
+           class="badge {{ cat.color }} hover:ring-1 hover:ring-white/20 text-sm transition-all">
+          {{ cat.name }}
+        </a>
+      {% endif %}
+    {% endfor %}
+
+    {# -- Date range pills ------------------------------------------------ #}
+    <span class="w-px h-6 bg-white/10 hidden sm:block"></span>
+
+    {% for value, label in date_choices %}
+      {% if active_date == value %}
+        <a href="?date="
+           class="badge bg-brand-500/20 text-brand-300 ring-1 ring-brand-400/40 text-sm">
+          {{ label }} ✕
+        </a>
+      {% else %}
+        <a href="?date={{ value }}"
+           class="badge bg-ink-700/50 text-slate-400 hover:text-slate-200 text-sm transition-colors">
+          {{ label }}
+        </a>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+</div>
