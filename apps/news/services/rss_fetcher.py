@@ -99,10 +99,6 @@ def _strip_html(text) -> str:
     clean = re.sub(r'<[^>]+>', '', str(text))
     # Collapse whitespace.
     return ' '.join(clean.split())
-    """Safely trim HTML-ish whitespace from a feed value."""
-    if not text:
-        return ''
-    return ' '.join(str(text).split())
 
 
 # ---------------------------------------------------------------------------
@@ -158,12 +154,11 @@ def fetch_feed(feed) -> tuple:
         image_url = _get_image_url(entry)
         published_at = _parse_date(entry)
 
-        # Smart (hybrid) categorisation, with the feed's default as fallback.
-        category = categorizer.categorize(
-            title=title,
-            summary=summary,
-            fallback_category=feed.default_category,
-        )
+        # Categorisation strategy:
+        #   If the feed has a default category, use it directly (no smart scoring).
+        #   Otherwise, leave category as None — the pre_save signal on Article
+        #   will auto-categorize via keyword matching.
+        category = feed.default_category if feed.default_category_id else None
 
         Article.objects.create(
             title=title,

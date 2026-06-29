@@ -163,18 +163,6 @@ class Article(models.Model):
                 n += 1
                 self.slug = f'{base}-{n}'
 
-        # Automatic categorization only for articles without a pre-assigned category.
-        if not self.category_id:
-            # Priority 1: If the feed has a default category, use it and bypass the algorithm.
-            if self.feed_id and self.feed and self.feed.default_category:
-                self.category = self.feed.default_category
-            else:
-                # Priority 2: Smart keyword-based hybrid categorization.
-                from apps.news.services import categorizer
-                cat = categorizer(self.title, self.summary or '')
-                if cat:
-                    self.category = cat
-
         super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
@@ -263,10 +251,28 @@ class RSSFeed(models.Model):
 # Helper: compute dedup_hash at the model layer for manual entries too.
 # ---------------------------------------------------------------------------
 def _article_pre_save(sender, instance, **kwargs):
-    """Ensure every article has a dedup_hash before hitting the DB."""
-    if not instance.dedup_hash and instance.title:
-        from apps.news.services import dedup
-        instance.dedup_hash = dedup.title_hash(instance.title)
+    """
+    Auto-fill missing fields before an Article is saved:
+
+      1. ``dedup_hash`` – normalised SHA-1 of the title (for duplicate detection).
+      2. ``category``   – keyword-based smart categorisation when no category is
+                          set (works for both manual and RSS articles).
+    """
+    if instance.title:
+        # 1) Dedup hash
+        if not instance.dedup_hash:
+            from apps.news.services import dedup
+            instance.dedup_hash = dedup.title_hash(instance.title)
+
+        # 2) Auto-categorize: only when category is not already set.
+        if not instance.category_id:
+            from apps.news.services import categorizer
+            category = categorizer.categorize(
+                title=instance.title,
+                summary=instance.summary or '',
+            )
+            if category:
+                instance.category = category
 
 # Wire up the signal at import time so it is active everywhere the app loads.
 pre_save.connect(_article_pre_save, sender=Article)
