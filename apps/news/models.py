@@ -27,6 +27,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
+from django.db.models.signals import pre_save
 
 
 # ---------------------------------------------------------------------------
@@ -156,12 +157,24 @@ class Article(models.Model):
         if not self.slug:
             base = slugify(self.title, allow_unicode=True) or 'article'
             self.slug = base
-            # Guarantee uniqueness (cheap, race-tolerant enough for a portal).
             n = 1
             qs = Article.objects.filter(slug__startswith=self.slug).exclude(pk=self.pk)
             while qs.filter(slug=self.slug).exists():
                 n += 1
                 self.slug = f'{base}-{n}'
+
+        # Automatic categorization only for articles without a pre-assigned category.
+        if not self.category_id:
+            # Priority 1: If the feed has a default category, use it and bypass the algorithm.
+            if self.feed_id and self.feed and self.feed.default_category:
+                self.category = self.feed.default_category
+            else:
+                # Priority 2: Smart keyword-based hybrid categorization.
+                from apps.news.services import categorizer
+                cat = categorizer(self.title, self.summary or '')
+                if cat:
+                    self.category = cat
+
         super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
@@ -199,7 +212,7 @@ class RSSFeed(models.Model):
     """
 
     name = models.CharField('دسته خبری', max_length=150, unique=True)
-    # title = models.CharField('نام خبرگزاری', max_length=150, unique=False)
+    title = models.CharField('نام خبرگزاری', max_length=150, unique=False)
     url = models.URLField('آدرس RSS', unique=True)
     website = models.URLField('وب‌سایت', blank=True, help_text='اختیاری؛ برای نمایش در منبع خبر')
     default_category = models.ForeignKey(
@@ -255,7 +268,5 @@ def _article_pre_save(sender, instance, **kwargs):
         from apps.news.services import dedup
         instance.dedup_hash = dedup.title_hash(instance.title)
 
-
 # Wire up the signal at import time so it is active everywhere the app loads.
-from django.db.models.signals import pre_save  # noqa: E402  (local import on purpose)
 pre_save.connect(_article_pre_save, sender=Article)
