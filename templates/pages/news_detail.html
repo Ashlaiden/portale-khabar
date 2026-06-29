@@ -1,4 +1,4 @@
-{# ===========================================================================
+{% comment %} ===========================================================================
    pages/news_detail.html — Single article detail page.
 
    Shows:
@@ -8,7 +8,7 @@
      4. Comment section (list + form).
      5. Related articles.
      6. Left sidebar.
-   =========================================================================== #}
+   =========================================================================== {% endcomment %}
 {% extends 'base.html' %}
 
 {% block title %}{{ article.title }} — {{ SITE_NAME }}{% endblock %}
@@ -19,6 +19,14 @@
 
   {# -- Main column ------------------------------------------------------- #}
   <div class="flex-1 min-w-0 space-y-6">
+
+    {# -- Back link -------------------------------------------------------- #}
+    <a href="{% url 'news:list' %}" class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-brand-300 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+      بازگشت به اخبار
+    </a>
 
     {# -- Article card (read-only display) -------------------------------- #}
     <article class="glass rounded-2xl overflow-hidden shadow-glass">

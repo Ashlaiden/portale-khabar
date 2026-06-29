@@ -1,10 +1,10 @@
-{# ===========================================================================
+{% comment %} ===========================================================================
    pages/news_list.html — News listing with filters and sidebar.
 
    Used for both the general news list (/news/) and the RSS-only list
    (/rss-news/). The view passes ``page_obj`` (paginated), ``sidebar_news``,
    filter state variables, and ``page_title`` for the heading.
-   =========================================================================== #}
+   =========================================================================== {% endcomment %}
 {% extends 'base.html' %}
 {% load portal_extras %}
 
@@ -23,6 +23,14 @@
     {% portal_date_choices as date_choices %}
     {% include 'partials/filter_bar.html' %}
 
+    {# -- Result count (small helper line) ------------------------------- #}
+    {% if page_obj and page_obj.paginator.count > 0 %}
+      <p class="text-xs text-slate-500">
+        {{ page_obj.paginator.count }} خبر یافت شد
+        {% if active_query %} برای «{{ active_query }}»{% endif %}
+      </p>
+    {% endif %}
+
     {# -- Article grid ---------------------------------------------------- #}
     {% if page_obj %}
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -35,7 +43,12 @@
     {# -- Empty state ----------------------------------------------------- #}
     {% if not page_obj or page_obj.paginator.count == 0 %}
       <div class="glass rounded-2xl p-12 shadow-glass text-center">
-        <p class="text-slate-400 text-lg mb-2">خبری یافت نشد.</p>
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-500/10 flex items-center justify-center">
+          <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        <p class="text-slate-300 text-lg mb-2">خبری یافت نشد.</p>
         <p class="text-slate-500 text-sm">فیلترها را تغییر دهید یا بعداً مراجعه کنید.</p>
       </div>
     {% endif %}

@@ -139,10 +139,25 @@
     });
   }
 
+  // -- Desktop search toggle ----------------------------------------------
+  function setupDesktopSearch() {
+    const btn = document.getElementById('nav-search-toggle');
+    const box = document.getElementById('desktop-search');
+    if (!btn || !box) return;
+    btn.addEventListener('click', function () {
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        const input = box.querySelector('input');
+        if (input) input.focus();
+      }
+    });
+  }
+
   // -- Boot ---------------------------------------------------------------
   document.addEventListener('DOMContentLoaded', function () {
     setupLikeButtons();
     setupCommentForm();
     setupMobileNav();
+    setupDesktopSearch();
   });
 })();

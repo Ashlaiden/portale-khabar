@@ -90,7 +90,15 @@ def _get_image_url(entry) -> str:
     return ''
 
 
-def _strip(text) -> str:
+def _strip_html(text) -> str:
+    """Remove HTML tags and decode entities from a string."""
+    if not text:
+        return ''
+    import re
+    # Remove HTML tags.
+    clean = re.sub(r'<[^>]+>', '', str(text))
+    # Collapse whitespace.
+    return ' '.join(clean.split())
     """Safely trim HTML-ish whitespace from a feed value."""
     if not text:
         return ''
@@ -134,7 +142,7 @@ def fetch_feed(feed) -> tuple:
 
     entries = list(getattr(parsed, 'entries', []) or [])[:MAX_ENTRIES_PER_FEED]
     for entry in entries:
-        title = _strip(entry.get('title'))
+        title = _strip_html(entry.get('title'))
         if not title:
             skipped += 1
             continue
@@ -145,7 +153,7 @@ def fetch_feed(feed) -> tuple:
             skipped += 1
             continue
 
-        summary = _strip(entry.get('summary') or entry.get('description'))
+        summary = _strip_html(entry.get('summary') or entry.get('description'))
         link = entry.get('link') or ''
         image_url = _get_image_url(entry)
         published_at = _parse_date(entry)

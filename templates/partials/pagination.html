@@ -1,9 +1,9 @@
-{# ===========================================================================
+{% comment %} ===========================================================================
    partials/pagination.html — Page navigation.
 
    Expects ``page_obj`` (Django Paginator page) in the context.
    Preserves all current GET parameters so filters survive page changes.
-   =========================================================================== #}
+   =========================================================================== {% endcomment %}
 
 {% if page_obj.has_other_pages %}
   <nav class="flex items-center justify-center gap-1 mt-8" aria-label="صفحات">

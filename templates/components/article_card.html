@@ -1,4 +1,4 @@
-{# ===========================================================================
+{% comment %} ===========================================================================
    components/article_card.html — A glassmorphism card for a single article.
 
    Context variables:
@@ -8,14 +8,14 @@
 
    The card is raised (shadow + translateY on hover) and shows the RSS badge
    + source name when the article is RSS-sourced.
-   =========================================================================== #}
+   =========================================================================== {% endcomment %}
 
 {% load static %}
 
 {% firstof show_image True as show_img %}
 {% firstof large False as is_large %}
 
-<article class="glass glass-hover rounded-2xl overflow-hidden shadow-glass flex flex-col">
+<article class="glass glass-hover rounded-2xl overflow-hidden shadow-glass flex flex-col group">
 
   {# -- Image ------------------------------------------------------------- #}
   {% if show_img and article.has_image %}

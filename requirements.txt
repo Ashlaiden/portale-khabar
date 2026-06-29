@@ -26,5 +26,5 @@ python-dateutil==2.9.0.post0
 # Image handling for manually-uploaded article images (Django's ImageField).
 Pillow==12.2.0
 
-# (Optional, nice-to-have) Persian / Jalali date formatting helpers.
-# django-jalali==6.1.0   # uncomment if you want Jalali dates in templates
+# Persian / Jalali date formatting.
+jdatetime==5.3.0

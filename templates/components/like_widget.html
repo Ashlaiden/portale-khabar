@@ -1,4 +1,4 @@
-{# ===========================================================================
+{% comment %} ===========================================================================
    components/like_widget.html — Like / Dislike buttons for an article.
 
    Context variables:
@@ -7,7 +7,7 @@
 
    The container must carry a ``data-article-id`` attribute so main.js can find
    it. Buttons use ``data-vote`` to signal their intent to the AJAX handler.
-   =========================================================================== #}
+   =========================================================================== {% endcomment %}
 
 <div class="glass rounded-2xl p-4 shadow-glass flex items-center gap-3" data-article-id="{{ article.id }}">
 

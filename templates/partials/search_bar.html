@@ -1,8 +1,8 @@
-{# ===========================================================================
+{% comment %} ===========================================================================
    partials/search_bar.html — A compact search box for the top of list pages.
 
    Expects ``active_query`` (the current search text) in the context.
-   =========================================================================== #}
+   =========================================================================== {% endcomment %}
 
 <form action="{% url 'news:search' %}" method="get"
       class="glass rounded-xl p-3 shadow-glass mb-6 flex items-center gap-2">
