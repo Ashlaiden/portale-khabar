@@ -198,7 +198,8 @@ class RSSFeed(models.Model):
     feeds whose ``is_active`` flag is set and whose interval has elapsed.
     """
 
-    name = models.CharField('نام خبرگزاری', max_length=150, unique=True)
+    name = models.CharField('دسته خبری', max_length=150, unique=True)
+    # title = models.CharField('نام خبرگزاری', max_length=150, unique=False)
     url = models.URLField('آدرس RSS', unique=True)
     website = models.URLField('وب‌سایت', blank=True, help_text='اختیاری؛ برای نمایش در منبع خبر')
     default_category = models.ForeignKey(

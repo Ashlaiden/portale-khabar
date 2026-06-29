@@ -233,16 +233,16 @@ JAZZMIN_UI_TWEAK = {
 # Project-specific tunables
 # ---------------------------------------------------------------------------
 # Number of "latest news" items shown in the left sidebar widget.
-NEWS_SIDEBAR_COUNT = 8
+NEWS_SIDEBAR_COUNT = 10
 
 # Number of featured big boxes on the home page.
 NEWS_FEATURED_COUNT = 3
 
 # Default page size for the news list views.
-NEWS_PAGE_SIZE = 9
+NEWS_PAGE_SIZE = 12
 
 # Default fetch interval (minutes) for newly-created RSS feeds.
-RSS_DEFAULT_INTERVAL_MINUTES = 30
+RSS_DEFAULT_INTERVAL_MINUTES = 5
 
 # How many items to keep per feed (oldest beyond this are pruned automatically
 # to keep the DB tidy). Set to 0 to disable pruning.

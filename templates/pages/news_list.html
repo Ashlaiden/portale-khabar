@@ -1,3 +1,4 @@
+{% extends 'base.html' %}
 {% comment %} ===========================================================================
    pages/news_list.html — News listing with filters and sidebar.
 
@@ -5,7 +6,6 @@
    (/rss-news/). The view passes ``page_obj`` (paginated), ``sidebar_news``,
    filter state variables, and ``page_title`` for the heading.
    =========================================================================== {% endcomment %}
-{% extends 'base.html' %}
 {% load portal_extras %}
 
 {% block title %}{{ page_title }} — {{ SITE_NAME }}{% endblock %}
