@@ -57,14 +57,14 @@ class CategoryAdmin(admin.ModelAdmin):
 # ---------------------------------------------------------------------------
 @admin.register(RSSFeed)
 class RSSFeedAdmin(admin.ModelAdmin):
-    list_display = ('is_active', 'default_category', 'fetch_interval_minutes',
+    list_display = ('name', 'is_active', 'default_category', 'fetch_interval_minutes',
                     'last_fetched_at', 'status_badge')
     list_filter = ('is_active', 'default_category')
     list_editable = ('is_active', 'fetch_interval_minutes')
     # search_fields = ('url')
     readonly_fields = ('last_fetched_at', 'last_error')
     actions = ['action_fetch_now']
-    list_display_links = ['default_category']
+    list_display_links = ['name']
 
     # -- list_display helpers ------------------------------------------------
     def name(self, obj):

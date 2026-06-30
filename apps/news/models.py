@@ -266,7 +266,9 @@ class RSSFeed(models.Model):
         ordering = ['id']
 
     def __str__(self) -> str:
-        return self.name
+        if self.agency_id:
+            return f'{self.agency.name} — {self.default_category}'
+        return self.url
 
     @property
     def is_due(self) -> bool:
