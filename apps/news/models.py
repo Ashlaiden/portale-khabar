@@ -42,9 +42,9 @@ class NewsAgency(models.Model):
     """
 
     name = models.CharField('نام خبرگزاری', max_length=150, unique=True)
-    slug = models.SlugField('نامک', max_length=160, unique=True, blank=True)
-    website = models.URLField('وب‌سایت', blank=True)
-    logo_url = models.URLField('آدرس لوگو', blank=True, help_text='آدرس لوگوی خبرگزاری')
+    slug = models.SlugField('نامک', max_length=160, unique=True, blank=True, allow_unicode=True)
+    website = models.URLField('وب‌سایت', blank=True, max_length=200)
+    logo_url = models.URLField('آدرس لوگو', blank=True, help_text='آدرس لوگوی خبرگزاری', max_length=500)
     order = models.PositiveIntegerField('ترتیب نمایش', default=0)
 
     class Meta:
@@ -74,7 +74,7 @@ class Category(models.Model):
     """
 
     name = models.CharField('نام', max_length=80, unique=True)
-    slug = models.SlugField('نامک', max_length=100, unique=True, blank=True)
+    slug = models.SlugField('نامک', max_length=100, unique=True, blank=True, allow_unicode=True)
     # Comma-separated Persian keywords used by the categoriser.
     keywords = models.TextField(
         'کلمات کلیدی برای دسته‌بندی خودکار',
@@ -121,7 +121,7 @@ class Article(models.Model):
     """
 
     title = models.CharField('عنوان', max_length=300)
-    slug = models.SlugField('نامک', max_length=350, unique=True, blank=True)
+    slug = models.SlugField('نامک', max_length=350, unique=True, blank=True, allow_unicode=True)
     summary = models.TextField('خلاصه', blank=True)
     content = models.TextField('متن خبر', blank=True)
 
@@ -137,7 +137,7 @@ class Article(models.Model):
     # Manual upload (editors). Stored under MEDIA_ROOT.
     image = models.ImageField('تصویر آپلودی', upload_to='articles/%Y/%m/', blank=True, null=True)
     # Remote image URL for RSS-sourced articles (stored, not downloaded).
-    image_url = models.URLField('آدرس تصویر (RSS)', blank=True, null=True)
+    image_url = models.URLField('آدرس تصویر (RSS)', blank=True, null=True, max_length=500)
 
     # Publishing / visibility -------------------------------------------------
     is_published = models.BooleanField('منتشر شده', default=True)
@@ -157,7 +157,7 @@ class Article(models.Model):
         verbose_name='منبع RSS',
     )
     source_name = models.CharField('نام خبرگزاری', max_length=150, blank=True)
-    source_url = models.URLField('لینک منبع', blank=True)
+    source_url = models.URLField('لینک منبع', blank=True, max_length=600)
 
     # Duplicate detection -----------------------------------------------------
     # Normalised+hashed title; see services/dedup.py for the normaliser.
@@ -239,8 +239,8 @@ class RSSFeed(models.Model):
         verbose_name='خبرگزاری',
         help_text='خبرگزاری مربوط به این فید RSS.',
     )
-    url = models.URLField('آدرس RSS', unique=True)
-    website = models.URLField('وب‌سایت', blank=True, help_text='اختیاری؛ برای نمایش در منبع خبر')
+    url = models.URLField('آدرس RSS', unique=True, max_length=200)
+    website = models.URLField('وب‌سایت', blank=True, help_text='اختیاری؛ برای نمایش در منبع خبر', max_length=200)
     default_category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -252,7 +252,7 @@ class RSSFeed(models.Model):
     )
     is_active = models.BooleanField('فعال', default=True)
     fetch_interval_minutes = models.PositiveIntegerField(
-        'بازه دریافت (دقیقه)', default=30,
+        'بازه دریافت (دقیقه)', default=5,
         help_text='هر چند دقیقه یک‌بار این فید بررسی شود.',
     )
     last_fetched_at = models.DateTimeField('آخرین دریافت', null=True, blank=True)

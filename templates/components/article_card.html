@@ -17,32 +17,50 @@
 
 <article class="glass glass-hover rounded-2xl overflow-hidden shadow-glass flex flex-col group">
 
-  {# -- Image ------------------------------------------------------------- #}
+  {# -- Image or placeholder --------------------------------------------- #}
   {% if show_img and article.has_image %}
     <a href="{{ article.get_absolute_url }}" class="relative block overflow-hidden
        {% if is_large %}h-64 sm:h-80{% else %}h-48 sm:h-56{% endif %}">
       <img src="{{ article.get_image_url }}" alt="{{ article.title }}"
            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
            loading="lazy">
-      {# Gradient overlay for text readability. #}
       <div class="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-transparent"></div>
-
-      {# Category badge (bottom-left of image). #}
       {% if article.category %}
         <span class="badge absolute bottom-3 right-3 {{ article.category.color }}">
           {{ article.category.name }}
         </span>
       {% endif %}
-
-      {# RSS indicator badge (bottom-right of image). #}
       {% if article.is_rss %}
         <span class="badge absolute bottom-3 left-3 bg-purple-500/25 text-purple-300 text-[10px]">
           RSS
-          {% if article.feed %}
-            · {{ article.feed.agency.name }}
-          {% else %}
-            · پورتال خبر
-          {% endif %}
+          {% if article.source_name %} · {{ article.source_name }}{% endif %}
+        </span>
+      {% endif %}
+    </a>
+  {% elif show_img and not article.has_image %}
+
+      <a href="{{ article.get_absolute_url }}" class="relative block overflow-hidden
+         {% if is_large %}h-64 sm:h-80{% else %}h-48 sm:h-56{% endif %} bg-gradient-to-br from-brand-900/60 to-slate-800/80 flex items-center justify-center">
+        {% if article.category %}
+          <span class="font-black text-brand-400/[0.12] select-none"
+                style="font-size:2.5rem">{{ article.category.name }}</span>
+        {% else %}
+          <svg class="w-10 h-10 text-white/[0.08]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/>
+          </svg>
+        {% endif %}
+
+      <div class="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-transparent"></div>
+      {% if article.category %}
+        <span class="badge absolute bottom-3 right-3 {{ article.category.color }}">
+          {{ article.category.name }}
+        </span>
+      {% endif %}
+      {% if article.is_rss %}
+        <span class="badge absolute bottom-3 left-3 bg-purple-500/25 text-purple-300 text-[10px]">
+          RSS
+          {% if article.source_name %} · {{ article.source_name }}{% endif %}
         </span>
       {% endif %}
     </a>

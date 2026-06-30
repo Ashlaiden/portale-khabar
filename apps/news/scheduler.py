@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # The master tick interval. The actual per-feed intervals are enforced inside
 # the job via ``RSSFeed.is_due``, so this only needs to be "fine-grained enough"
 # (e.g. 5 minutes). Setting it lower wastes CPU; higher means slower reaction.
-MASTER_INTERVAL_SECONDS = 5 * 60
+MASTER_INTERVAL_SECONDS = 10
 
 # Singleton scheduler instance; created on first start().
 _scheduler = None

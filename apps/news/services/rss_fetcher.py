@@ -120,8 +120,7 @@ def fetch_feed(feed) -> tuple:
 
     created = 0
     skipped = 0
-    feed.last_fetched_at = timezone.now()
-
+    
     ssl_ctx = ssl.create_default_context()
     ssl_ctx.check_hostname = False
     ssl_ctx.verify_mode = ssl.CERT_NONE
@@ -157,7 +156,7 @@ def fetch_feed(feed) -> tuple:
     #     return 0, 0
 
     # feedparser records problems in bozo; log but keep going if we have entries.
-    if parsed.bozo and not getattr(parsed, 'entries', None):
+    if parsed.bozo and not getattr(parsed, 'entries', None):   
         feed.last_error = f'parse error: {parsed.bozo_exception!s}'[:500]
         feed.save(update_fields=['last_fetched_at', 'last_error'])
         logger.warning('Feed %s returned a parse error: %s', feed.agency.name, ' - ', feed.category, parsed.bozo_exception)
@@ -208,6 +207,7 @@ def fetch_feed(feed) -> tuple:
         )
         created += 1
 
+    feed.last_fetched_at = timezone.now()
     feed.last_error = ''
     feed.save(update_fields=['last_fetched_at', 'last_error'])
     logger.info('Feed %s: imported %d, skipped %d', feed.agency.name, created, skipped)

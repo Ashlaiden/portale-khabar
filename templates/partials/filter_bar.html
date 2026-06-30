@@ -5,8 +5,11 @@
 <div class="glass rounded-2xl p-4 shadow-glass mb-6">
   <div class="flex flex-wrap items-center gap-3">
 
-    {# -- Search box ------------------------------------------------------- #}
-    <form action="{% url 'news:search' %}" method="get" class="flex-1 min-w-[200px]">
+    {# -- Search box (hidden inputs preserve active filters) --------------- #}
+    <form method="get" class="flex-1 min-w-[200px]">
+      {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}">{% endif %}
+      {% if active_agency %}<input type="hidden" name="agency" value="{{ active_agency }}">{% endif %}
+      {% if active_date %}<input type="hidden" name="date" value="{{ active_date }}">{% endif %}
       <input type="text" name="q"
              value="{{ active_query }}"
              placeholder="جستجو در اخبار…"
