@@ -12,10 +12,24 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from .models import Article, Category, RSSFeed
+from .models import Article, Category, NewsAgency, RSSFeed
 from .services import rss_fetcher
 
 
+# ---------------------------------------------------------------------------
+# Agency
+# ---------------------------------------------------------------------------
+@admin.register(NewsAgency)
+class NewsAgencyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'website', 'feeds_count', 'order')
+    list_editable = ('order',)
+    search_fields = ('name',)
+
+    def feeds_count(self, obj):
+        return obj.feeds.count()
+    feeds_count.short_description = 'تعداد فیدها'
+    
+    
 # ---------------------------------------------------------------------------
 # Category
 # ---------------------------------------------------------------------------
@@ -43,15 +57,20 @@ class CategoryAdmin(admin.ModelAdmin):
 # ---------------------------------------------------------------------------
 @admin.register(RSSFeed)
 class RSSFeedAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active', 'default_category', 'fetch_interval_minutes',
+    list_display = ('is_active', 'default_category', 'fetch_interval_minutes',
                     'last_fetched_at', 'status_badge')
-    list_filter = ('is_active',)
+    list_filter = ('is_active', 'default_category')
     list_editable = ('is_active', 'fetch_interval_minutes')
-    search_fields = ('name', 'url')
+    # search_fields = ('url')
     readonly_fields = ('last_fetched_at', 'last_error')
     actions = ['action_fetch_now']
+    list_display_links = ['default_category']
 
     # -- list_display helpers ------------------------------------------------
+    def name(self, obj):
+        return f'{obj.agency.name} - {obj.default_category}'
+    name.short_description = 'نام خبرگزاری'
+    
     def status_badge(self, obj):
         """Coloured badge summarising feed health for the list view."""
         if not obj.is_active:

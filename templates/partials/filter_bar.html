@@ -36,6 +36,22 @@
       {% endif %}
     {% endfor %}
 
+    {# -- Agency filter pills --------------------------------------------- #}
+    <span class="w-px h-6 bg-white/10 hidden sm:block"></span>
+    {% for agency in SITE_AGENCIES %}
+      {% if active_agency == agency.slug %}
+        <a href="?agency="
+           class="badge bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/40 text-sm">
+          {{ agency.name }} ✕
+        </a>
+      {% else %}
+        <a href="?agency={{ agency.slug }}"
+           class="badge bg-ink-700/50 text-amber-400/70 hover:text-amber-300 text-sm transition-colors">
+          {{ agency.name }}
+        </a>
+      {% endif %}
+    {% endfor %}
+
     {# -- Date range pills ------------------------------------------------ #}
     <span class="w-px h-6 bg-white/10 hidden sm:block"></span>
 

@@ -46,6 +46,11 @@ def _apply_filters(qs, request):
     category_slug = request.GET.get('category')
     if category_slug:
         qs = qs.filter(category__slug=category_slug)
+        
+    # Agency filter.
+    agency_slug = request.GET.get('agency')
+    if agency_slug:
+        qs = qs.filter(agency__slug=agency_slug)
 
     # Date filter (relative ranges in the site's timezone).
     date_filter = request.GET.get('date')
@@ -138,6 +143,7 @@ def news_list(request, slug=None):
         'sidebar_news': _latest(Article.objects, sidebar_count),
         # Echo current filters back into the template for the active states.
         'active_category': slug or request.GET.get('category', ''),
+        'active_agency': request.GET.get('agency', ''),
         'active_date': request.GET.get('date', ''),
         'active_query': request.GET.get('q', ''),
         'active_menu': 'news',
@@ -162,6 +168,7 @@ def rss_news_list(request):
         'page_obj': page_obj,
         'sidebar_news': _latest(Article.objects, sidebar_count),
         'active_category': request.GET.get('category', ''),
+        'active_agency': request.GET.get('agency', ''),
         'active_date': request.GET.get('date', ''),
         'active_query': request.GET.get('q', ''),
         'active_menu': 'rss',

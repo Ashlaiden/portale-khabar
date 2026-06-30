@@ -31,6 +31,37 @@ from django.db.models.signals import pre_save
 
 
 # ---------------------------------------------------------------------------
+# News Agency (خبرگزاری)
+# ---------------------------------------------------------------------------
+class NewsAgency(models.Model):
+    """
+    A news agency / source (e.g. خبرگزاری ایرنا، فارس، تسنیم).
+
+    Each RSSFeed belongs to one agency. Users can filter articles by agency
+    in the public site, similar to category filtering.
+    """
+
+    name = models.CharField('نام خبرگزاری', max_length=150, unique=True)
+    slug = models.SlugField('نامک', max_length=160, unique=True, blank=True)
+    website = models.URLField('وب‌سایت', blank=True)
+    logo_url = models.URLField('آدرس لوگو', blank=True, help_text='آدرس لوگوی خبرگزاری')
+    order = models.PositiveIntegerField('ترتیب نمایش', default=0)
+
+    class Meta:
+        verbose_name = 'خبرگزاری'
+        verbose_name_plural = 'خبرگزاری‌ها'
+        ordering = ['order', 'name']
+
+    def __str__(self) -> str:
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name, allow_unicode=True)
+        super().save(*args, **kwargs)
+        
+        
+# ---------------------------------------------------------------------------
 # Category
 # ---------------------------------------------------------------------------
 class Category(models.Model):
@@ -199,8 +230,15 @@ class RSSFeed(models.Model):
     feeds whose ``is_active`` flag is set and whose interval has elapsed.
     """
 
-    name = models.CharField('دسته خبری', max_length=150, unique=True)
-    title = models.CharField('نام خبرگزاری', max_length=150, unique=False)
+    agency = models.ForeignKey(
+        NewsAgency,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='feeds',
+        verbose_name='خبرگزاری',
+        help_text='خبرگزاری مربوط به این فید RSS.',
+    )
     url = models.URLField('آدرس RSS', unique=True)
     website = models.URLField('وب‌سایت', blank=True, help_text='اختیاری؛ برای نمایش در منبع خبر')
     default_category = models.ForeignKey(
@@ -225,7 +263,7 @@ class RSSFeed(models.Model):
     class Meta:
         verbose_name = 'منبع RSS'
         verbose_name_plural = 'منابع RSS'
-        ordering = ['name']
+        ordering = ['id']
 
     def __str__(self) -> str:
         return self.name

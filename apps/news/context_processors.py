@@ -8,7 +8,7 @@ categories, …) so individual views don't have to repeat themselves.
 
 from django.conf import settings
 from django.core.cache import cache
-from .models import Category
+from .models import Category, NewsAgency
 
 
 def site_context(request):
@@ -29,4 +29,5 @@ def site_context(request):
         'SITE_CATEGORIES': categories,
         'NEWS_SIDEBAR_COUNT': getattr(settings, 'NEWS_SIDEBAR_COUNT', 8),
         'SITE_VERSION': settings.SITE_VERSION,
+        'SITE_AGENCIES': list(NewsAgency.objects.all().order_by('order', 'name')),
     }
