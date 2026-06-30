@@ -85,8 +85,8 @@ class Like(models.Model):
 
     def __str__(self) -> str:
         return f'{self.get_value_display()} روی {self.article.title[:40]}'
-
-
+    
+    
 # ---------------------------------------------------------------------------
 # Signals: keep article counters in sync with votes.
 # ---------------------------------------------------------------------------

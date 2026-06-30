@@ -16,6 +16,7 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
+from .models import ContactMessage
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,9 @@ def contact(request):
             )
         except Exception:  # pragma: no cover - email failures shouldn't crash UX
             logger.exception('Failed to send contact email.')
+            
+    # Save message to database regardless of email setting.
+    ContactMessage.objects.create(name=name, email=email, message=message)
 
     messages.success(request, 'پیام شما با موفقیت ارسال شد. متشکریم!')
     return redirect('pages:contact')

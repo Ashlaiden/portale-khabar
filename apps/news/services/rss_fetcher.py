@@ -175,6 +175,10 @@ def fetch_feed(feed) -> tuple:
         if Article.objects.filter(dedup_hash=h).exists():
             skipped += 1
             continue
+        # Also check by source URL — more reliable than title hashing.
+        if link and Article.objects.filter(source_url=link).exists():
+            skipped += 1
+            continue
 
         summary = _strip_html(entry.get('summary') or entry.get('description'))
         link = entry.get('link') or ''
