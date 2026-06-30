@@ -251,4 +251,4 @@ RSS_MAX_ITEMS_PER_FEED = 200
 # Session key used to persist the per-browser vote identity for likes/dislikes.
 LIKE_SESSION_KEY = '_like_token'
 
-SITE_VERSION = 1.2
+SITE_VERSION = 1.3

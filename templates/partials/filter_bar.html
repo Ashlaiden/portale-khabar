@@ -1,19 +1,11 @@
 {% comment %} ===========================================================================
-   partials/filter_bar.html — Category, date and search filters.
-
-   Renders a horizontal filter strip above the news list. Active filters are
-   highlighted. All links preserve the current ``q`` search term.
-
-   Context variables:
-     active_category — slug of the currently-selected category (or '').
-     active_date     — 'today' / 'week' / 'month' / ''.
-     active_query    — current search query text (or '').
+   partials/filter_bar.html — Category, agency, date and search filters.
    =========================================================================== {% endcomment %}
 
 <div class="glass rounded-2xl p-4 shadow-glass mb-6">
   <div class="flex flex-wrap items-center gap-3">
 
-    {# -- Search box (always visible) ------------------------------------ #}
+    {# -- Search box ------------------------------------------------------- #}
     <form action="{% url 'news:search' %}" method="get" class="flex-1 min-w-[200px]">
       <input type="text" name="q"
              value="{{ active_query }}"
@@ -21,48 +13,55 @@
              class="input text-sm">
     </form>
 
-    {# -- Category pills ------------------------------------------------- #}
+    {# -- Category pills --------------------------------------------------- #}
     {% for cat in SITE_CATEGORIES %}
       {% if active_category == cat.slug %}
-        <a href="?category="
+        <a href="?category={% if active_agency %}&agency={{ active_agency }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
            class="badge {{ cat.color }} ring-1 ring-brand-400/40 text-sm">
           {{ cat.name }} ✕
         </a>
       {% else %}
-        <a href="?category={{ cat.slug }}"
+        <a href="?category={{ cat.slug }}{% if active_agency %}&agency={{ active_agency }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
            class="badge {{ cat.color }} hover:ring-1 hover:ring-white/20 text-sm transition-all">
           {{ cat.name }}
         </a>
       {% endif %}
     {% endfor %}
 
-    {# -- Agency filter pills --------------------------------------------- #}
-    <span class="w-px h-6 bg-white/10 hidden sm:block"></span>
-    {% for agency in SITE_AGENCIES %}
-      {% if active_agency == agency.slug %}
-        <a href="?agency="
-           class="badge bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/40 text-sm">
-          {{ agency.name }} ✕
-        </a>
-      {% else %}
-        <a href="?agency={{ agency.slug }}"
-           class="badge bg-ink-700/50 text-amber-400/70 hover:text-amber-300 text-sm transition-colors">
-          {{ agency.name }}
-        </a>
-      {% endif %}
-    {% endfor %}
+    {# -- Agency dropdown -------------------------------------------------- #}
+    <div class="relative" id="agency-dropdown">
+      <button onclick="document.getElementById('agency-list').classList.toggle('hidden')"
+              class="badge {% if active_agency %}bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/40{% else %}bg-ink-700/50 text-amber-400/70 hover:text-amber-300{% endif %} text-sm transition-colors cursor-pointer">
+        {% if active_agency %}{{ active_agency_name }} ✕{% else %}خبرگزاری ▾{% endif %}
+      </button>
+      <div id="agency-list" class="hidden absolute top-full mt-2 right-0 z-40 glass rounded-xl p-2 min-w-[180px] shadow-glass border border-white/5">
+        {% for agency in SITE_AGENCIES %}
+          <a href="?agency={{ agency.slug }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
+             class="block px-3 py-2 rounded-lg text-sm transition-colors
+                    {% if active_agency == agency.slug %}text-amber-300 bg-amber-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+            {{ agency.name }}
+          </a>
+        {% endfor %}
+        {% if active_agency %}
+          <a href="?{% if active_category %}category={{ active_category }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
+             class="block px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors border-t border-white/5 mt-1 pt-1">
+            حذف فیلتر خبرگزاری
+          </a>
+        {% endif %}
+      </div>
+    </div>
 
-    {# -- Date range pills ------------------------------------------------ #}
+    {# -- Date range pills ------------------------------------------------- #}
     <span class="w-px h-6 bg-white/10 hidden sm:block"></span>
 
     {% for value, label in date_choices %}
       {% if active_date == value %}
-        <a href="?date="
+        <a href="?date={% if active_category %}&category={{ active_category }}{% endif %}{% if active_agency %}&agency={{ active_agency }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
            class="badge bg-brand-500/20 text-brand-300 ring-1 ring-brand-400/40 text-sm">
           {{ label }} ✕
         </a>
       {% else %}
-        <a href="?date={{ value }}"
+        <a href="?date={{ value }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_agency %}&agency={{ active_agency }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
            class="badge bg-ink-700/50 text-slate-400 hover:text-slate-200 text-sm transition-colors">
           {{ label }}
         </a>
@@ -71,3 +70,14 @@
 
   </div>
 </div>
+
+{# -- Close dropdown when clicking outside -------------------------------- #}
+<script>
+  document.addEventListener('click', function(e) {
+    var dd = document.getElementById('agency-dropdown');
+    if (dd && !dd.contains(e.target)) {
+      var list = document.getElementById('agency-list');
+      if (list) list.classList.add('hidden');
+    }
+  });
+</script>

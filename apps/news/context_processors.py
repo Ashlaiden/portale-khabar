@@ -20,6 +20,17 @@ def site_context(request):
       * ``SITE_CATEGORIES``  – ordered list of categories for the navbar menu.
       * ``NEWS_SIDEBAR_COUNT`` – how many items the latest-news sidebar shows.
     """
+    categories = list(Category.objects.all().order_by('order', 'name'))
+    agencies = list(NewsAgency.objects.all().order_by('order', 'name'))
+
+    active_agency_slug = request.GET.get('agency', '')
+    active_agency_name = ''
+    if active_agency_slug:
+        for a in agencies:
+            if a.slug == active_agency_slug:
+                active_agency_name = a.name
+                break
+    
     # Cheap query: a handful of category rows. Cached results from the ORM
     # would be an option if the count ever grows large.
     categories = list(Category.objects.all().order_by('order', 'name'))
@@ -30,4 +41,5 @@ def site_context(request):
         'NEWS_SIDEBAR_COUNT': getattr(settings, 'NEWS_SIDEBAR_COUNT', 8),
         'SITE_VERSION': settings.SITE_VERSION,
         'SITE_AGENCIES': list(NewsAgency.objects.all().order_by('order', 'name')),
+        'active_agency_name': active_agency_name,
     }

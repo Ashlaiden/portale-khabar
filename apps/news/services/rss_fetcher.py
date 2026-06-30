@@ -142,7 +142,7 @@ def fetch_feed(feed) -> tuple:
     if not xml_data:
         feed.last_error = f'fetch error: could not connect to {feed.url}'[:500]
         feed.save(update_fields=['last_fetched_at', 'last_error'])
-        logger.warning('Failed to fetch feed %s', feed.name)
+        logger.warning('Failed to fetch feed %s', feed.agency.name)
         return 0, 0
 
     parsed = feedparser.parse(xml_data)
@@ -160,7 +160,7 @@ def fetch_feed(feed) -> tuple:
     if parsed.bozo and not getattr(parsed, 'entries', None):
         feed.last_error = f'parse error: {parsed.bozo_exception!s}'[:500]
         feed.save(update_fields=['last_fetched_at', 'last_error'])
-        logger.warning('Feed %s returned a parse error: %s', feed.name, parsed.bozo_exception)
+        logger.warning('Feed %s returned a parse error: %s', feed.agency.name, ' - ', feed.category, parsed.bozo_exception)
         return 0, 0
 
     entries = list(getattr(parsed, 'entries', []) or [])[:MAX_ENTRIES_PER_FEED]
@@ -175,13 +175,15 @@ def fetch_feed(feed) -> tuple:
         if Article.objects.filter(dedup_hash=h).exists():
             skipped += 1
             continue
+        
+        link = entry.get('link') or ''
+        
         # Also check by source URL — more reliable than title hashing.
         if link and Article.objects.filter(source_url=link).exists():
             skipped += 1
             continue
 
         summary = _strip_html(entry.get('summary') or entry.get('description'))
-        link = entry.get('link') or ''
         image_url = _get_image_url(entry)
         published_at = _parse_date(entry)
 
@@ -200,7 +202,7 @@ def fetch_feed(feed) -> tuple:
             is_rss=True,
             published_at=published_at,
             feed=feed,
-            source_name=feed.title,
+            source_name=feed.agency.name,
             source_url=link,
             dedup_hash=h,
         )
@@ -208,7 +210,7 @@ def fetch_feed(feed) -> tuple:
 
     feed.last_error = ''
     feed.save(update_fields=['last_fetched_at', 'last_error'])
-    logger.info('Feed %s: imported %d, skipped %d', feed.name, created, skipped)
+    logger.info('Feed %s: imported %d, skipped %d', feed.agency.name, created, skipped)
 
     # Tidy up: prune very old items so the DB stays small.
     _prune_feed(feed)
@@ -229,10 +231,10 @@ def fetch_all_due_feeds() -> dict:
         if not feed.is_due:
             continue
         try:
-            results[feed.name] = fetch_feed(feed)
+            results[feed.id] = fetch_feed(feed)
         except Exception:  # pragma: no cover - defensive: never crash the loop
             logger.exception('Unhandled error while fetching feed %s', feed.name)
-            results[feed.name] = (0, 0)
+            results[feed.id] = (0, 0)
     return results
 
 

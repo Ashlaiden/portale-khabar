@@ -50,7 +50,7 @@ def _apply_filters(qs, request):
     # Agency filter.
     agency_slug = request.GET.get('agency')
     if agency_slug:
-        qs = qs.filter(agency__slug=agency_slug)
+        qs = qs.filter(feed__agency__slug=agency_slug)
 
     # Date filter (relative ranges in the site's timezone).
     date_filter = request.GET.get('date')
