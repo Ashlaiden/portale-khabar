@@ -101,6 +101,7 @@
   function setupCommentForm() {
     const form = document.getElementById('comment-form');
     if (!form) return;
+    const msgBox = document.getElementById('comment-msg');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       const fd = new FormData(form);
@@ -115,19 +116,57 @@
         .then(function (r) { return r.json(); })
         .then(function (data) {
           if (data.ok) {
-            showToast(data.message || 'نظر شما ثبت شد.');
             form.reset();
+            if (msgBox) {
+              msgBox.textContent = data.message || 'نظر شما ثبت شد و پس از تأیید مدیر نمایش داده می‌شود.';
+              msgBox.className = 'rounded-xl px-4 py-3 text-sm mb-3 border bg-emerald-500/15 border-emerald-500/30 text-emerald-300';
+            }
+            setTimeout(function () {
+              if (msgBox) msgBox.className = 'hidden rounded-xl px-4 py-3 text-sm mb-3 transition-all';
+            }, 8000);
           } else {
-            showToast(data.error || 'خطا در ثبت نظر.', 'error');
+            if (msgBox) {
+              msgBox.textContent = data.error || 'خطا در ثبت نظر.';
+              msgBox.className = 'rounded-xl px-4 py-3 text-sm mb-3 border bg-red-500/15 border-red-500/30 text-red-300';
+            }
           }
         })
         .catch(function () {
-          // Fall back to a normal submit if fetch fails for any reason.
           form.removeEventListener('submit', arguments.callee, false);
           form.submit();
         });
     });
   }
+  // function setupCommentForm() {
+  //   const form = document.getElementById('comment-form');
+  //   if (!form) return;
+  //   form.addEventListener('submit', function (e) {
+  //     e.preventDefault();
+  //     const fd = new FormData(form);
+  //     fetch(form.action, {
+  //       method: 'POST',
+  //       headers: {
+  //         'X-CSRFToken': getCSRFToken(),
+  //         'X-Requested-With': 'XMLHttpRequest',
+  //       },
+  //       body: fd,
+  //     })
+  //       .then(function (r) { return r.json(); })
+  //       .then(function (data) {
+  //         if (data.ok) {
+  //           showToast(data.message || 'نظر شما ثبت شد.');
+  //           form.reset();
+  //         } else {
+  //           showToast(data.error || 'خطا در ثبت نظر.', 'error');
+  //         }
+  //       })
+  //       .catch(function () {
+  //         // Fall back to a normal submit if fetch fails for any reason.
+  //         form.removeEventListener('submit', arguments.callee, false);
+  //         form.submit();
+  //       });
+  //   });
+  // }
 
   // -- Mobile nav toggle --------------------------------------------------
   function setupMobileNav() {

@@ -38,8 +38,10 @@
       {% if article.is_rss %}
         <span class="badge absolute bottom-3 left-3 bg-purple-500/25 text-purple-300 text-[10px]">
           RSS
-          {% if article.source_name %}
-            · {{ article.source_name }}
+          {% if article.feed %}
+            · {{ article.feed.title }}
+          {% else %}
+            · پورتال خبر
           {% endif %}
         </span>
       {% endif %}

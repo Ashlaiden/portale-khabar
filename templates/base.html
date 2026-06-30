@@ -30,7 +30,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Lalezar&display=swap" rel="stylesheet">
 
   {# -- Tailwind CSS (compiled) ------------------------------------------ #}
-  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}?v={{ STATIC_VERSION }}">
 
   {# -- Extra page-specific CSS ------------------------------------------ #}
   {% block extra_css %}{% endblock %}
@@ -44,13 +44,48 @@
   {# -- Main content area ------------------------------------------------- #}
   <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
     {% block content %}{% endblock %}
+
+    {# -- Django messages (non-AJAX fallback) ----------------------------- #}
+    {% if messages %}
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl mb-4">
+      {% for msg in messages %}
+        <div class="glass rounded-xl px-4 py-3 text-sm border
+          {% if msg.tags == 'error' %}bg-red-500/90 border-red-400 text-white
+          {% elif msg.tags == 'success' %}bg-emerald-500/90 border-emerald-400 text-white
+          {% else %}bg-brand-500/90 border-brand-400 text-white{% endif %}
+          shadow-glass mb-2">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  
   </main>
+
+  <script>
+    (function() {
+      var serverVersion = {{ SITE_VERSION }};
+      var storedVersion = localStorage.getItem('site_version');
+      if (storedVersion && storedVersion != serverVersion) {
+        var btn = document.getElementById('refresh-btn');
+        if (btn) btn.classList.remove('hidden');
+      }
+      if (!storedVersion) {
+        localStorage.setItem('site_version', serverVersion);
+      }
+    })();
+
+    function refreshSite() {
+      localStorage.setItem('site_version', {{ SITE_VERSION }});
+      location.reload(true);
+    }
+  </script>
 
   {# -- Footer ------------------------------------------------------------- #}
   {% include 'components/footer.html' %}
 
   {# -- JavaScript -------------------------------------------------------- #}
-  <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/main.js' %}?v={{ STATIC_VERSION }}"></script>
   {% block extra_js %}{% endblock %}
 
 </body>

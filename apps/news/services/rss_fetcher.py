@@ -21,13 +21,14 @@ Robustness:
 """
 
 import logging
+import ssl
 from datetime import datetime, timezone as dt_tz
-
+import requests
 import feedparser
 from dateutil import parser as date_parser
 from django.utils import timezone
-
 from . import categorizer, dedup
+import urllib.request
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +105,9 @@ def _strip_html(text) -> str:
 # ---------------------------------------------------------------------------
 # Core fetch logic
 # ---------------------------------------------------------------------------
+requests.packages.urllib3.disable_warnings()
+_session = requests.Session()
+_session.headers.update({'User-Agent': USER_AGENT})
 def fetch_feed(feed) -> tuple:
     """
     Download and import one feed.
@@ -118,16 +122,39 @@ def fetch_feed(feed) -> tuple:
     skipped = 0
     feed.last_fetched_at = timezone.now()
 
-    try:
-        parsed = feedparser.parse(
-            feed.url,
-            agent=USER_AGENT,
-        )
-    except Exception as exc:  # network / parsing error
-        feed.last_error = f'fetch error: {exc!s}'[:500]
+    ssl_ctx = ssl.create_default_context()
+    ssl_ctx.check_hostname = False
+    ssl_ctx.verify_mode = ssl.CERT_NONE
+    ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1
+    ssl_ctx.set_ciphers('DEFAULT:@SECLEVEL=0')
+    handler = urllib.request.HTTPSHandler(context=ssl_ctx)
+
+    xml_data = None
+    for url in (feed.url, feed.url.replace('https://', 'http://')):
+        try:
+            resp = _session.get(url, verify=False, timeout=15)
+            resp.raise_for_status()
+            xml_data = resp.content
+            break
+        except Exception:
+            continue
+
+    if not xml_data:
+        feed.last_error = f'fetch error: could not connect to {feed.url}'[:500]
         feed.save(update_fields=['last_fetched_at', 'last_error'])
-        logger.exception('Failed to fetch feed %s', feed.name)
+        logger.warning('Failed to fetch feed %s', feed.name)
         return 0, 0
+
+    parsed = feedparser.parse(xml_data)
+
+    # try:
+    #     response = requests.get(feed.url, headers={'User-Agent': USER_AGENT}, verify=False, timeout=15)
+    #     parsed = feedparser.parse(response.content)
+    # except Exception as exc:  # network / parsing error
+    #     feed.last_error = f'fetch error: {exc!s}'[:500]
+    #     feed.save(update_fields=['last_fetched_at', 'last_error'])
+    #     logger.exception('Failed to fetch feed %s', feed.name)
+    #     return 0, 0
 
     # feedparser records problems in bozo; log but keep going if we have entries.
     if parsed.bozo and not getattr(parsed, 'entries', None):
@@ -163,13 +190,13 @@ def fetch_feed(feed) -> tuple:
         Article.objects.create(
             title=title,
             summary=summary,
-            content=summary,  # RSS items usually only carry a summary.
+            content='',  # RSS items usually only carry a summary.
             category=category,
             image_url=image_url,
             is_rss=True,
             published_at=published_at,
             feed=feed,
-            source_name=feed.name,
+            source_name=feed.title,
             source_url=link,
             dedup_hash=h,
         )

@@ -183,10 +183,10 @@ JAZZMIN_SETTINGS = {
         {'model': 'auth.User'},
     ],
     # Left sidebar user menu.
-    'usermenu_links': [
-        {'name': 'تغییر رمز عبور', 'url': 'admin:password_change', 'icon': 'fa fa-key'},
-        {'name': 'خروج', 'url': 'admin:logout', 'icon': 'fa fa-sign-out'},
-    ],
+    # 'usermenu_links': [
+    #     {'name': 'تغییر رمز عبور', 'url': 'admin:password_change', 'icon': 'fa fa-key'},
+    #     {'name': 'خروج', 'url': 'admin:logout', 'icon': 'fa fa-sign-out'},
+    # ],
     # Show the "recent actions" sidebar.
     'show_ui_builder': False,
     # Modern dark / flat theme by default.
@@ -233,7 +233,7 @@ JAZZMIN_UI_TWEAK = {
 # Project-specific tunables
 # ---------------------------------------------------------------------------
 # Number of "latest news" items shown in the left sidebar widget.
-NEWS_SIDEBAR_COUNT = 10
+NEWS_SIDEBAR_COUNT = 8
 
 # Number of featured big boxes on the home page.
 NEWS_FEATURED_COUNT = 3
@@ -242,7 +242,7 @@ NEWS_FEATURED_COUNT = 3
 NEWS_PAGE_SIZE = 12
 
 # Default fetch interval (minutes) for newly-created RSS feeds.
-RSS_DEFAULT_INTERVAL_MINUTES = 5
+RSS_DEFAULT_INTERVAL_MINUTES = 3
 
 # How many items to keep per feed (oldest beyond this are pruned automatically
 # to keep the DB tidy). Set to 0 to disable pruning.
@@ -250,3 +250,5 @@ RSS_MAX_ITEMS_PER_FEED = 200
 
 # Session key used to persist the per-browser vote identity for likes/dislikes.
 LIKE_SESSION_KEY = '_like_token'
+
+SITE_VERSION = 1.2

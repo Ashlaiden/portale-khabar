@@ -15,9 +15,11 @@ from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
-
+from django.core.cache import cache
 from .models import Article, Category
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 
 # ---------------------------------------------------------------------------
 # Small queryset helpers (kept here for readability; not large enough to need
@@ -215,6 +217,12 @@ def news_detail(request, slug):
     }
     return render(request, 'pages/news_detail.html', context)
 
+@csrf_protect
+@require_POST
+def refresh_static(request):
+    from django.core.cache import cache
+    cache.set('static_version', (cache.get('static_version') or 1) + 1)
+    return JsonResponse({'ok': True})
 
 # ---------------------------------------------------------------------------
 # Helpers

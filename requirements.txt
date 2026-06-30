@@ -3,6 +3,8 @@
 # Install with:  pip install -r requirements.txt
 # ---------------------------------------------------------------------------
 
+requests==2.32.3
+
 # Core web framework (LTS line of the 5.x series).
 Django==5.2
 

@@ -7,7 +7,7 @@ categories, …) so individual views don't have to repeat themselves.
 """
 
 from django.conf import settings
-
+from django.core.cache import cache
 from .models import Category
 
 
@@ -28,4 +28,5 @@ def site_context(request):
         'SITE_NAME': 'پرتال خبری',
         'SITE_CATEGORIES': categories,
         'NEWS_SIDEBAR_COUNT': getattr(settings, 'NEWS_SIDEBAR_COUNT', 8),
+        'SITE_VERSION': settings.SITE_VERSION,
     }

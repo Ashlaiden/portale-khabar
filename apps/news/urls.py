@@ -28,7 +28,8 @@ urlpatterns = [
     re_path(r'^news/category/' + SLUG_RE + r'/$', views.news_list, name='category'),
     path('rss-news/', views.rss_news_list, name='rss_news'),
     path('search/', views.search, name='search'),
-
+    path('refresh/', views.refresh_static, name='refresh_static'),
+    
     # Single article detail (with comments + like buttons).
     re_path(r'^news/' + SLUG_RE + r'/$', views.news_detail, name='detail'),
 ]
