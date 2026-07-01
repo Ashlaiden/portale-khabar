@@ -1,17 +1,15 @@
 services:
-  web:
-    build: .
+  khabar:
+    image: ghcr.io/ashlaiden/portal-khabar
+    container_name: portal-khabar
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
-      - media_data:/app/media
-    env_file:
-      - .env
+      - ~/db:/app/db.sqlite3
     environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      - DJANGO_SUPERUSER_PASSWORD=1234
       - DJANGO_SETTINGS_MODULE=apps.config.settings
       - ENABLE_SCHEDULER=true
     restart: unless-stopped
-
-volumes:
-  media_data:

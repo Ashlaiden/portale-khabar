@@ -31,28 +31,11 @@
       {% endif %}
     {% endfor %}
 
-    {# -- Agency dropdown -------------------------------------------------- #}
-    <div class="relative" id="agency-dropdown">
-      <button onclick="document.getElementById('agency-list').classList.toggle('hidden')"
-              class="badge {% if active_agency %}bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/40{% else %}bg-ink-700/50 text-amber-400/70 hover:text-amber-300{% endif %} text-sm transition-colors cursor-pointer">
-        {% if active_agency %}{{ active_agency_name }} ✕{% else %}خبرگزاری ▾{% endif %}
-      </button>
-      <div id="agency-list" class="hidden absolute top-full mt-2 right-0 z-40 glass rounded-xl p-2 min-w-[180px] shadow-glass border border-white/5">
-        {% for agency in SITE_AGENCIES %}
-          <a href="?agency={{ agency.slug }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
-             class="block px-3 py-2 rounded-lg text-sm transition-colors
-                    {% if active_agency == agency.slug %}text-amber-300 bg-amber-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
-            {{ agency.name }}
-          </a>
-        {% endfor %}
-        {% if active_agency %}
-          <a href="?{% if active_category %}category={{ active_category }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
-             class="block px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors border-t border-white/5 mt-1 pt-1">
-            حذف فیلتر خبرگزاری
-          </a>
-        {% endif %}
-      </div>
-    </div>
+    {# -- Agency dropdown button ------------------------------------------- #}
+    <button id="agency-btn" type="button"
+            class="badge {% if active_agency %}bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/40{% else %}bg-ink-700/50 text-amber-400/70 hover:text-amber-300{% endif %} text-sm transition-colors cursor-pointer">
+      {% if active_agency %}{{ active_agency_name }} ✕{% else %}خبرگزاری ▾{% endif %}
+    </button>
 
     {# -- Date range pills ------------------------------------------------- #}
     <span class="w-px h-6 bg-white/10 hidden sm:block"></span>
@@ -74,13 +57,65 @@
   </div>
 </div>
 
-{# -- Close dropdown when clicking outside -------------------------------- #}
+{# -- Agency menu (will be moved to <body> by JS to escape all stacking contexts) #}
+<div id="agency-menu" class="hidden" style="position:fixed; z-index:99999;">
+  <div class="glass rounded-xl p-2 min-w-[180px] shadow-glass border border-white/5">
+    {% for agency in SITE_AGENCIES %}
+      <a href="?agency={{ agency.slug }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
+         class="block px-3 py-2 rounded-lg text-sm transition-colors
+                {% if active_agency == agency.slug %}text-amber-300 bg-amber-500/15{% else %}text-slate-300 hover:text-white hover:bg-white/5{% endif %}">
+        {{ agency.name }}
+      </a>
+    {% endfor %}
+    {% if active_agency %}
+      <a href="?{% if active_category %}category={{ active_category }}{% endif %}{% if active_date %}&date={{ active_date }}{% endif %}{% if active_query %}&q={{ active_query }}{% endif %}"
+         class="block px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors border-t border-white/5 mt-1 pt-1">
+        حذف فیلتر خبرگزاری
+      </a>
+    {% endif %}
+  </div>
+</div>
+
 <script>
-  document.addEventListener('click', function(e) {
-    var dd = document.getElementById('agency-dropdown');
-    if (dd && !dd.contains(e.target)) {
-      var list = document.getElementById('agency-list');
-      if (list) list.classList.add('hidden');
+(function() {
+  var btn = document.getElementById('agency-btn');
+  var menu = document.getElementById('agency-menu');
+  if (!btn || !menu) return;
+
+  // منتقل کردن منو به body برای فرار از تمام stacking context ها
+  document.body.appendChild(menu);
+
+  function showMenu() {
+    var r = btn.getBoundingClientRect();
+    menu.style.top = (r.bottom + 8) + 'px';
+    menu.style.left = r.left + 'px';
+    menu.classList.remove('hidden');
+  }
+
+  function hideMenu() {
+    menu.classList.add('hidden');
+  }
+
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (menu.classList.contains('hidden')) {
+      showMenu();
+    } else {
+      hideMenu();
     }
   });
+
+  // بستن با کلیک بیرون
+  document.addEventListener('click', function(e) {
+    if (!menu.contains(e.target)) {
+      hideMenu();
+    }
+  });
+
+  // بستن با اسکرول
+  window.addEventListener('scroll', hideMenu, { passive: true });
+
+  // بستن با ریسایز
+  window.addEventListener('resize', hideMenu);
+})();
 </script>

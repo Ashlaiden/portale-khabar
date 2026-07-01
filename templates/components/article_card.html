@@ -15,7 +15,7 @@
 {% firstof show_image True as show_img %}
 {% firstof large False as is_large %}
 
-<article class="glass glass-hover rounded-2xl overflow-hidden shadow-glass flex flex-col group">
+<article class="glass glass-hover rounded-2xl overflow-hidden shadow-glass flex flex-col group relative z-10">
 
   {# -- Image or placeholder --------------------------------------------- #}
   {% if show_img and article.has_image %}

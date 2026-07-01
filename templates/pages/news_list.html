@@ -11,11 +11,11 @@
 {% block title %}{{ page_title }} — {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-<div class="flex gap-6">
+<div class="flex gap-6 relative">
 
   {# -- Main column ------------------------------------------------------- #}
   <div class="flex-1 min-w-0 space-y-6">
-
+  
     {# -- Page heading --------------------------------------------------- #}
     <h1 class="section-title text-2xl">{{ page_title }}</h1>
 
@@ -59,7 +59,7 @@
   </div>
 
   {# -- Left sidebar (latest news) --------------------------------------- #}
-  <div class="hidden lg:block w-72 flex-shrink-0">
+  <div class="hidden lg:block w-72 ...">
     {% include 'components/sidebar.html' %}
   </div>
 

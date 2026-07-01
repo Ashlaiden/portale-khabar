@@ -7,7 +7,7 @@
 
 <aside class="glass rounded-2xl p-4 shadow-glass sticky top-20">
   {# -- Section heading -------------------------------------------------- #}
-  <h3 class="section-title text-lg">آخرین اخبار</h3>
+  <h3 class="section-title text-lg">آخرین اخبار</h3>++
 
   <ul class="space-y-3 divide-y divide-white/5">
     {% for item in sidebar_news %}
@@ -20,6 +20,12 @@
             <img src="{{ item.get_image_url }}" alt=""
                  class="w-16 h-16 object-cover rounded-xl flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity"
                  loading="lazy">
+          {% else %}
+            <div class="w-16 h-16 rounded-xl flex-shrink-0 bg-gradient-to-br from-brand-900/50 to-slate-800/60 flex items-center justify-center border border-white/10">
+              <span class="text-brand-400/15 font-black text-xs select-none leading-tight text-center px-1">
+                {% if item.category %}{{ item.category.name }}{% endif %}
+              </span>
+            </div>
           {% endif %}
 
           <div class="flex-1 min-w-0">
@@ -29,10 +35,7 @@
             <div class="flex items-center gap-2 mt-1 text-xs text-slate-500">
               {# RSS badge and source name if applicable. #}
               {% if item.is_rss %}
-                <span class="badge bg-purple-500/20 text-purple-300 text-[10px]">RSS</span>
-                {% if item.source_name %}
-                  <span>{{ item.source_name }}</span>
-                {% endif %}
+                <span class="badge bg-purple-500/20 text-purple-300 text-[10px]">RSS - {{ item.feed.agency.name }}</span>
               {% else %}
                 <span>دستی</span>
               {% endif %}
